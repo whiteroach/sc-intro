@@ -1,0 +1,86 @@
+// [[Patterns]]
+Pbind(\degree, Pseries(0, 1, 30), \dur, 0.05).play;
+
+// -----------Pbind---------------
+// Plays C ones every second:
+// - 0 is middle C (C4)
+// - accesing notes above (1(D), 2, 3..)
+// - notes below (-1(B), -2, -3)
+x = Pbind(\degree, 0, \dur, 0.5);
+x.play;
+
+// --Pseq
+// Plays this sequence once
+Pbind(\degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 2), \dur, 0.2).play;
+
+// Plays the sequence 5 times and apply an array of duration values that get applied in a loop till there are tones to play in the seuence of tones
+(
+Pbind(
+\degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 5),
+\dur, Pseq([1, 0.5, 1, 0.5, 2, 4], inf)
+).play;
+)
+
+// Pbind accept for ways of specifyng pitches
+// 1. \note: 0 = C4, 1 = C4#
+// 2. \midinote: 60 = C4, 61 = C4#
+// 3. \freq: 261.6 = C4
+// 4. \degree: 0 = C4, 1 = D4
+
+// Durations are in beats
+// Amplitude between 0 - 1
+// Legato 0.1 -1
+
+(
+Pbind(
+\degree, Pseq([0, -1, 2, -3, 4, -3, 7, 11, 4, 2, 0, -3], 5),
+\dur, Pseq([0.2, 0.1, 0.1], inf),
+\amp, Pseq([0.7, 0.5, 0.3, 02], inf),
+\legato, 0.4
+).play;
+)
+
+// key of B, C#, D# = 3, E= 4, F# = 6, G#,A#
+// 2nd - 5th - 1st and 1st again.
+(
+Pbind(
+\note, Pseq([1, 6, -1, 1], 4),
+\dur, Pseq([0.25], inf),
+\amp, Pseq([0.7, 03, 0.7, 0.3], inf),
+\legato, 0.7
+).play;
+)
+// passing O as amp create in this case a break of full beat
+(
+Pbind(
+\note, Pseq([1, 1, 1, 1 ], 4),
+\dur, Pseq([0.25, 1, 0.25, 0.25], inf),
+\amp, Pseq([0.7, 0, 0.7, 0.3], inf),
+\legato, 0.7
+).play;
+)
+
+// -----------Prand---------------
+//Picks a random item from the list
+(
+Pbind(
+\note, Prand([1, 6, -1, 1], inf),
+\dur, Prand([0, 0.25, 1], inf),
+\amp, Prand([0.2, 0.4, 0.6], inf),
+\legato, Prand([0.2, 1, 0.5], inf),
+).trace.play
+)
+
+// Trace logs the parameter selected by Prand
+
+// -----------Pwhite---------------
+(
+Pbind(
+\freq, Pwhite(100, 500),
+\dur, Prand([0.15, 0.25, 0.3],inf),
+\amp, 0.2,
+\legato, 0.3,
+).trace.play;
+)
+
+// page 22
