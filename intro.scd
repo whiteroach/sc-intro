@@ -12,6 +12,8 @@ s.peakCPU
 
 { SinOsc.ar(400, 0, 0.1) }.play;
 
+{ SinOsc.ar(200, 0, 0.1) }.play;
+
 { SinOsc.ar(LFNoise0.kr(10).range(500, 1500), mul:0.1) }.play;
 
 // sweet sweet noise
