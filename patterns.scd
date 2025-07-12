@@ -1,4 +1,6 @@
 // [[Patterns]]
+s.volume.gui;
+
 Pbind(\degree, Pseries(0, 1, 30), \dur, 0.05).play;
 
 // -----------Pbind---------------
@@ -15,10 +17,10 @@ Pbind(\degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 2), \dur, 0.2).play;
 
 // Plays the sequence 5 times and apply an array of duration values that get applied in a loop till there are tones to play in the seuence of tones
 (
-Pbind(
-\degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 5),
-\dur, Pseq([1, 0.5, 1, 0.5, 2, 4], inf)
-).play;
+    Pbind(
+        \degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 5),
+        \dur, Pseq([1, 0.5, 1, 0.5, 2, 4], inf)
+    ).play;
 )
 
 // Pbind accept for ways of specifyng pitches
@@ -29,58 +31,112 @@ Pbind(
 
 // Durations are in beats
 // Amplitude between 0 - 1
-// Legato 0.1 -1
+// Legato 0.1 - 1
 
 (
-Pbind(
-\degree, Pseq([0, -1, 2, -3, 4, -3, 7, 11, 4, 2, 0, -3], 5),
-\dur, Pseq([0.2, 0.1, 0.1], inf),
-\amp, Pseq([0.7, 0.5, 0.3, 02], inf),
-\legato, 0.4
-).play;
+    Pbind(
+        \degree, Pseq([0, -1, 2, -3, 4, -3, 7, 11, 4, 2, 0, -3], 5),
+        \dur, Pseq([0.2, 0.1, 0.1], inf),
+        \amp, Pseq([0.7, 0.5, 0.3, 02], inf),
+        \legato, 0.4
+    ).play;
 )
 
 // key of B, C#, D# = 3, E= 4, F# = 6, G#,A#
 // 2nd - 5th - 1st and 1st again.
 (
-Pbind(
-\note, Pseq([1, 6, -1, 1], 4),
-\dur, Pseq([0.25], inf),
-\amp, Pseq([0.7, 03, 0.7, 0.3], inf),
-\legato, 0.7
-).play;
+    Pbind(
+        \note, Pseq([1, 6, -1, 1], 4),
+        \dur, Pseq([0.25], inf),
+        \amp, Pseq([0.7, 03, 0.7, 0.3], inf),
+        \legato, 0.7
+    ).play;
 )
+
 // passing O as amp create in this case a break of full beat
 (
-Pbind(
-\note, Pseq([1, 1, 1, 1 ], 4),
-\dur, Pseq([0.25, 1, 0.25, 0.25], inf),
-\amp, Pseq([0.7, 0, 0.7, 0.3], inf),
-\legato, 0.7
-).play;
+    Pbind(
+        \note, Pseq([1, 1, 1, 1 ], 4),
+        \dur, Pseq([0.25, 1, 0.25, 0.25], inf),
+        \amp, Pseq([0.7, 0, 0.7, 0.3], inf),
+        \legato, 0.7
+    ).play;
 )
 
 // -----------Prand---------------
 //Picks a random item from the list
 (
-Pbind(
-\note, Prand([1, 6, -1, 1], inf),
-\dur, Prand([0, 0.25, 1], inf),
-\amp, Prand([0.2, 0.4, 0.6], inf),
-\legato, Prand([0.2, 1, 0.5], inf),
-).trace.play
+    Pbind(
+        \note, Prand([1, 6, -1, 1], inf),
+        \dur, Prand([0, 0.25, 1], inf),
+        \amp, Prand([0.2, 0.4, 0.6], inf),
+        \legato, Prand([0.2, 1, 0.5], inf),
+    ).trace.play
 )
 
 // Trace logs the parameter selected by Prand
 
 // -----------Pwhite---------------
 (
-Pbind(
-\freq, Pwhite(100, 500),
-\dur, Prand([0.15, 0.25, 0.3],inf),
-\amp, 0.2,
-\legato, 0.3,
-).trace.play;
+    Pbind(
+        \freq, Pwhite(100, 500),
+        \dur, Prand([0.15, 0.25, 0.3],inf),
+        \amp, 0.2,
+        \legato, 0.3,
+    ).trace.play;
 )
 
 // page 22
+
+// Drone
+// cannot set a noisegenerator for amplitude
+(
+    Pbind(
+        \note, Prand([2, 6, -1, 1], inf),
+        \dur, 10,
+        //\amp, Prand([0.2, 0.4, 0.8], inf),
+        \amp, 0.6,
+        \legato, 1,
+    ).play;
+)
+
+// -----------Pser---------------
+// works similarly to Pser but insteadof full circles you can specify the number of items returned. 
+// 0 - 2 - 3 - 5 - 7 - 8 - 11 - 12 - 0 - 2 - 3
+(
+    Pbind(
+        \note, Pser([0, 2, 3, 5, 7, 8, 11, 12], 11),
+        \dur, 0.15;
+    ).trace.play;
+)
+
+
+
+// -----------Pxrand---------------
+// like Prand but never repeat the same value in a sequence
+(
+    Pbind(
+        \note, Pxrand([0, 2, 3, 5, 7, 8, 11, 12], inf),
+        \dur, 0.15,
+    ).trace.play;
+)
+
+
+// -----------Pshuf---------------
+// shufle a list and repeat it for a given amount of times 
+(
+    Pbind(
+        \note, Pshuf([0, 2, 3, 5, 7, 8, 11, 12], 6),
+        \dur, 0.15, 
+    ).trace.play;
+)
+
+
+// -----------Pslide---------------
+// list, repeats, length, step - how far to step from previous segment
+(
+    Pbind(
+        \note, Pslide([0, 2, 3, 5, 7, 8, 11, 12], 7, 3, 1),
+        \dur, 0.15, 
+    ).trace.play;
+)
