@@ -8,29 +8,28 @@ s.volume.gui;
 
 
 (
-        ~seq_one = Pbind(
-		    \note, Pseq([1,6,0], 2),
-            \dur, ~dur_t,
-        );
+    ~seq_one = Pbind(
+	    \note, Pseq([1,6,0], 2),
+        \dur, ~dur_t,
+    );
 )
 
 (
-        ~seq_two = Pbind(
-		    \note, Pseq([3,5,0], 2),
-            \dur, ~dur_t,
-        );
+    ~seq_two = Pbind(
+	    \note, Pseq([3,5,0], 2),
+        \dur, ~dur_t,
+    );
 )
 
 ~seq_one.play;
 // ---- fork ---
 (
     {
-	   ~seq_one.play;
-	   10.wait; // the amount to wait before the next process
-	   ~seq_two.play;
-	   20.wait;
-	   ~seq_one.play;
-
+	    ~seq_one.play;
+	    10.wait; // the amount to wait before the next process
+	    ~seq_two.play;
+	    20.wait;
+	    ~seq_one.play;
     }.fork;
 )
 
