@@ -1,4 +1,5 @@
 // [[Patterns]]
+s.boot;
 s.volume.gui;
 
 Pbind(\degree, Pseries(0, 1, 30), \dur, 0.05).play;
@@ -56,7 +57,7 @@ Pbind(\degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 2), \dur, 0.2).play;
 // passing O as amp create in this case a break of full beat
 (
     Pbind(
-        \note, Pseq([1, 1, 1, 1 ], 4),
+        \note, Pseq([1, 1, 1, 1 ], 1),
         \dur, Pseq([0.25, 1, 0.25, 0.25], inf),
         \amp, Pseq([0.7, 0, 0.7, 0.3], inf),
         \legato, 0.7
@@ -99,9 +100,18 @@ Pbind(\degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 2), \dur, 0.2).play;
         \legato, 1,
     ).play;
 )
+// cooler Drone
+(
+    Pbind(
+        \freq, Pwhite(100, 500),
+        \dur, 10,
+        \amp, 0.2,
+        \legato, 1.5,
+    ).trace.play;
+)
 
 // -----------Pser---------------
-// works similarly to Pser but insteadof full circles you can specify the number of items returned. 
+// works similarly to Pser but insteadof full circles you can specify the number of items returned.
 // 0 - 2 - 3 - 5 - 7 - 8 - 11 - 12 - 0 - 2 - 3
 (
     Pbind(
@@ -123,11 +133,11 @@ Pbind(\degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 2), \dur, 0.2).play;
 
 
 // -----------Pshuf---------------
-// shufle a list and repeat it for a given amount of times 
+// shufle a list and repeat it for a given amount of times
 (
     Pbind(
         \note, Pshuf([0, 2, 3, 5, 7, 8, 11, 12], 6),
-        \dur, 0.15, 
+        \dur, 0.15,
     ).trace.play;
 )
 
@@ -137,6 +147,51 @@ Pbind(\degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 2), \dur, 0.2).play;
 (
     Pbind(
         \note, Pslide([0, 2, 3, 5, 7, 8, 11, 12], 7, 3, 1),
-        \dur, 0.15, 
+        \dur, 0.15,
     ).trace.play;
 )
+
+// -----------Pgeom---------------
+// Takes three arguments: starts, grow, length
+// Grow incrementaly
+(
+    Pbind(
+	    \note, Pseq([0, 2, 3, 5, 7, 8, 11, 12], inf),
+	    \dur, Pgeom(0.1, 1.1, 25),
+    ).trace.play;
+)
+
+// -----------Pn---------------
+// Pattern a Number of times
+// repeats a given value: pattern, repeat, key
+// pattern can be any pattarn, Pshuf, Pseq ...
+(
+    Pbind(
+    	\note, Pseq([0, Pn(2, 3), 3, Pn(5, 3), 7, Pn(8, 3), 11, 12], 1),
+	    \dur, 0.15,
+    ).trace.play;
+)
+
+
+// -----------Chords---------------
+(
+    Pbind(
+	    \note, Pseq([[0,3,7], [2,5,8], [3,7,0], [5,8,12]], 3),
+	    \dur, 0.15
+    ).play;
+)
+// strumming
+(
+    Pbind(
+	    \note, Pseq([[-7, 3, 7, 10], [0, 3, 5, 8]], 3),
+	    \dur, 1,
+	    \legato, 0.7,
+	    \strum, 0.1, // more is arpeggio
+    ).play;
+)
+
+
+
+
+
+
