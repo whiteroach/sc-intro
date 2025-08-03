@@ -191,7 +191,41 @@ Pbind(\degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 2), \dur, 0.2).play;
 )
 
 
+// -----------Scales---------------
+Scale.directory; 
 
+m = Scale.minor; 
+j = Scale.major;
+
+j.degrees; // -> [ 0, 2, 4, 5, 7, 9, 11 ]
+
+m.degrees; // -> [ 0, 2, 3, 5, 7, 8, 10 ]
+
+
+// works only with degrees!
+h = Scale.hungarianMinor;
+
+h.size;
+
+h.degrees; // the degrees are in this case the 12 notes.
+// \degree refers to the degrees of the scale, but h.degrees returns the indexes of the notes that compose the scale. 
+// -> [ 0, 2, 3, 6, 7, 8, 11 ] 
+
+// It is possible to access a chromatic note between degrees by using decimal => 3.1
+(
+    f = Pbind(
+            \scale, h,
+            \degree, Pxrand([0, 3, 8, 6, 7, 11], 10),
+            \root, -3, // A
+            \dur, 10,
+            \legato, 1,
+        ).trace
+)
+
+f.play;
+
+
+// f.['degree'].postln;
 
 
 
