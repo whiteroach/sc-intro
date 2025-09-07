@@ -34,3 +34,5 @@ s.volume.gui;
 )
 
 // Ther is any way to evaluate the duration of a pattern before playing it? 
+
+
