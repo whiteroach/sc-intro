@@ -1,3 +1,7 @@
+s.boot;
+s.volume.gui;
+
+
 //METRONOME
 //todo:
 // - Pbind in a function with params dur and time/bpm
@@ -15,10 +19,9 @@ SynthDef(\noiseSynth, { |out=0, freq=1000, rq=0.1, amp=0.1, dur=1|
 // Play the Pbind
 (
 Pbind(
-    \instrument, \noiseSynth,
-    //\dur, Pseq([0.2, 0.7, 0.1, 0.1, 0.1, 0.1], inf), 
-    \dur, 1/3, // for complex rhythm can pass here a Pseq
-    \freq, Pseq([700,500,500], inf),
+    \instrument, \noiseSynth, 
+    \dur, Pseq([Pn(1/3, 3), Pn(1/4, 4)], inf), // for complex rhythm can pass here a Pseq
+    \freq, Pseq([[700, 500, 500],[700, 500, 500, 500]],inf),
     //\rq, 0.2, // Resonance
     \amp, 0.4,
 ).play;
