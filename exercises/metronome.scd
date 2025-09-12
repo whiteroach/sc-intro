@@ -1,5 +1,6 @@
 s.boot;
 s.volume.gui;
+ // ++ concatenate two arrays
 ~duration_sequence;
 ~clicks_sequence;
 
@@ -11,8 +12,12 @@ s.volume.gui;
 ~metronome_tempo;
 ~rests = List[];
 
-// function that returns the index of rests from an array
-~rest_selector = { 
+// -----------------------UTILS----------------------------
+
+// Extract from an array of durations the index of rests.
+// params bar_dur: an array of duration values.
+// return a list of indexes related to the position of the rest in the given array.
+~rest_selector = {
     | bar_dur |
     var rests = List[];
     bar_dur.do(
@@ -27,39 +32,55 @@ s.volume.gui;
     );
     rests
 };
-~func.value(~swing_bar);
-~rests.postln;
+// ~rest_selector.(~swing_bar);
 
-~rest_selector.(~swing_bar);
-~clicks_handler = {
+// Given an array of durations, compiles an array of frequencies matching the length of the input
+// params bar_dur: an array of duration values.
+// returns an array of frequencies.
+~frequency_feeder = {
+	| item, list|
+	var arr = Array.fill(item, {500});
+	arr.put(0, 700);
+	list.add(arr)
+};
+
+~handler = {
     | bar_dur |
-    var rests = ~rest_selector.(bar_dur);
-    var freq_arr;
-    if(rests.isEmpty, 
-        {
-            // if(bar_dur[0].isKindOf(Pn), {}, {})
-            //bar_dur[0].repeats;
-            p.repeats;
-            freq_arr = Array.fill(p.repeats, {500});
-            freq_arr.put(0, 700);
-            // change the value of the first element
-        }
-    )
-}
-a = Pn(1/3, 3);
-a = a.asStream.next;
-a.postln;
 
-if(~swing_bar.includes(Rest(1/3)){"yes".postln},{"no".postln});
-// to check for rest need to use .isRest so I guess i need a loop 
-x = ~swing_bar.do({|dur, i|if(dur.isRest,{~rests.add(i)}); };);
-~rests.postln
+	var freq_list = List[];
+	var dur = List[];
+
+	bar_dur.do({
+		| item |
+		var arr;
+		case
+		{ item.isKindOf(Pn) } {
+			~frequency_feeder.(item.repeats, freq_list);
+			dur.add(item);
+
+		}
+		{item[0].isKindOf(Pn)} {
+			~frequency_feeder.(item[0].repeats, freq_list);
+			dur.add(item[0]);
+		}
+        {
+			~frequency_feeder.(item.size, freq_list);
+			item.do(
+				{
+					| i |
+					dur.add(i)
+				}
+			)
+		};
+	});
+
+	[dur.asArray, freq_list.asArray]
+};
+
+
 
 //METRONOME
-//todo:
-// - Pbind in a function with params dur and time/bpm
-// - find a way to deal with multiple time signature and the accent on the freq. (maybe strum)
-// percussive sound 
+// percussive sound
 (
 SynthDef(\noiseSynth, { |out=0, freq=1000, rq=0.1, amp=0.1, dur=1|
     var noise = WhiteNoise.ar(amp);
@@ -69,26 +90,21 @@ SynthDef(\noiseSynth, { |out=0, freq=1000, rq=0.1, amp=0.1, dur=1|
 }).add;
 )
 
-~duration_sequence = ~swing_bar ++ ~triplets_bar; // ++ concatenate two arrays
-~clicks_sequence = [~swing_clicks, ~triplet_clicks]
+g = [[Pn(1/3,3)], [1/8, Rest(1/8), 1/8, 1/8, 1/8,1/8, 1/8, 1/8], [1/3, Rest(1/3), 1/3], Pn(1/4,4)];
+~metronome = {
+	|dur_arr, tempo|
+	var params = ~handler.(dur_arr);
+	Pbind(
+		\instrument, \noiseSynth,
+		\dur, Pseq(params[0], inf),
+		\freq, Pseq(params[1],inf),
+		\amp, 0.4,
+		\tempo, tempo,
+	).play;
+}
 
-(
-Pbind(
-    \instrument, \noiseSynth, 
-    //\dur, Pseq([Pn(1/3, 3), Pn(1/4, 4)], inf), // for complex rhythm can pass here a Pseq
-    \dur, Pseq([Pn(1/3, 3), Pn(1/4, 4)], inf), 
-    \freq, Pseq([[700, 500, 500],[700, 500, 500, 500]],inf),
-    //\rq, 0.2, // Resonance
-    \amp, 0.4,
-).play;
-)
 
-(
-Pbind(
-    \instrument, \noiseSynth, 
-    \dur, Pseq(~swing_bar, inf), 
-    \freq, Pseq(~swing_clicks, inf),
-    \tempo, 120/60,
-    \amp, 0.4,
-).play;
-)
+~metronome.(g, 60/60)
+
+
+
