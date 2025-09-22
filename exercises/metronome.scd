@@ -35,8 +35,8 @@ s.volume.gui;
 // ~rest_selector.(~swing_bar);
 
 // Given an array of durations, compiles an array of frequencies matching the length of the input
-// params bar_dur: an array of duration values.
-// returns an array of frequencies.
+// params item: number,
+// params list: a list of frequencies
 ~frequency_feeder = {
 	| item, list|
 	var arr = Array.fill(item, {500});
@@ -77,6 +77,65 @@ s.volume.gui;
 	[dur.asArray, freq_list.asArray]
 };
 
+if(item.size > 1 && item.any {|elem| elem.isKindOf(Pn) || elem.isKindOf(Rest)  }){
+	/*
+	  - extract rests and Pn
+	  - count elements  array.size - item.repeats
+	  - feeds the freequency_feeeder
+	*/
+	var counter = 0;
+	item.do({
+		| elem |
+		if(elem.isKindOf(Pn)){
+			counter += elem.repeats;
+		}{
+			counter += 1;
+		}
+	})
+	~frequency_feeder.(counter, freq_list);
+				item.do(
+				{
+					| i |
+					dur.add(i)
+				}
+			)
+}
+
+
+~handler_two = {
+    | bar_dur |
+
+	var freq_list = List[];
+	var dur = List[];
+
+	bar_dur.do({
+		| item |
+		var arr;
+
+		if(item.isKindOf(Pn)) {
+			~frequency_feeder.(item.repeats, freq_list);
+			dur.add(item);
+		}
+        {
+			var counter = 0;
+
+			item.do({
+				| elem |
+					if(elem.isKindOf(Pn)){
+						counter = counter + elem.repeats;
+					}{
+						counter = counter +  1;
+					};
+					dur.add(elem);
+				}
+			);
+			~frequency_feeder.(counter, freq_list);
+		};
+	});
+
+	[dur.asArray, freq_list.asArray]
+};
+
 
 
 //METRONOME
@@ -90,10 +149,16 @@ SynthDef(\noiseSynth, { |out=0, freq=1000, rq=0.1, amp=0.1, dur=1|
 }).add;
 )
 
-g = [[Pn(1/3,3)], [1/8, Rest(1/8), 1/8, 1/8, 1/8,1/8, 1/8, 1/8], [1/3, Rest(1/3), 1/3], Pn(1/4,4)];
+p = [[Pn(1/4, 2), Rest(1/4), 1/4]]; //still have to solve this case.
+
+~handler_two.(g);
+
+g = [[Pn(1/4, 2), Rest(1/4), 1/4], [Pn(1/12,12)], [1/8, Rest(1/8), 1/8, 1/8, 1/8,1/8, 1/8, 1/8], [1/3, Rest(1/3), 1/3], Pn(1/4,4)];
+
+f = [[Pn(4/3, 4)]]
 ~metronome = {
 	|dur_arr, tempo|
-	var params = ~handler.(dur_arr);
+	var params = ~handler_two.(dur_arr);
 	Pbind(
 		\instrument, \noiseSynth,
 		\dur, Pseq(params[0], inf),
@@ -104,7 +169,7 @@ g = [[Pn(1/3,3)], [1/8, Rest(1/8), 1/8, 1/8, 1/8,1/8, 1/8, 1/8], [1/3, Rest(1/3)
 }
 
 
-~metronome.(g, 60/60)
+~metronome.(f, 60/60)
 
 
 
