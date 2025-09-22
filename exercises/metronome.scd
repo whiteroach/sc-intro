@@ -155,7 +155,7 @@ p = [[Pn(1/4, 2), Rest(1/4), 1/4]]; //still have to solve this case.
 
 g = [[Pn(1/4, 2), Rest(1/4), 1/4], [Pn(1/12,12)], [1/8, Rest(1/8), 1/8, 1/8, 1/8,1/8, 1/8, 1/8], [1/3, Rest(1/3), 1/3], Pn(1/4,4)];
 
-f = [[Pn(4/3, 4)]]
+f = [[Pn(2/3, 12)]]
 ~metronome = {
 	|dur_arr, tempo|
 	var params = ~handler_two.(dur_arr);
