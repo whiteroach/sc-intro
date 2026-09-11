@@ -1,5 +1,16 @@
 s.boot;
 s.volume.gui;
+
+// ----------- Variables -----------
+//Global
+~someVar = 33;
+w = 33;
+
+//Local
+(
+var someLocalVar = 22;
+someLocalVar;
+)
 // p.29
 // ----------- Receiver notation, functional notation -----------
 5.dup(20); // <- Receiver notation
