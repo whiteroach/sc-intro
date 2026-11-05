@@ -7,7 +7,7 @@ Pbind(\degree, Pseries(0, 1, 30), \dur, 0.05).play;
 // -----------Pbind---------------
 // Plays C ones every second:
 // - 0 is middle C (C4)
-// - accesing notes above (1(D), 2, 3..)
+// - accessing notes above (1(D), 2, 3..)
 // - notes below (-1(B), -2, -3)
 x = Pbind(\degree, 0, \dur, 0.5);
 x.play;
@@ -16,7 +16,7 @@ x.play;
 // Plays this sequence once
 Pbind(\degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 2), \dur, 0.2).play;
 
-// Plays the sequence 5 times and apply an array of duration values that get applied in a loop till there are tones to play in the seuence of tones
+// Plays the sequence 5 times and apply an array of duration values that get applied in a loop till there are tones to play in the sequence of tones
 (
     Pbind(
         \degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 5),
@@ -24,7 +24,7 @@ Pbind(\degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 2), \dur, 0.2).play;
     ).play;
 )
 
-// Pbind accept for ways of specifyng pitches
+// Pbind accept four ways of specifying pitches
 // 1. \note: 0 = C4, 1 = C4#
 // 2. \midinote: 60 = C4, 61 = C4#
 // 3. \freq: 261.6 = C4
@@ -90,7 +90,7 @@ Pbind(\degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 2), \dur, 0.2).play;
 // page 22
 
 // Drone
-// cannot set a noisegenerator for amplitude
+// cannot set a noise generator for amplitude
 (
     Pbind(
         \note, Prand([2, 6, -1, 1], inf),
@@ -111,7 +111,7 @@ Pbind(\degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 2), \dur, 0.2).play;
 )
 
 // -----------Pser---------------
-// works similarly to Pser but insteadof full circles you can specify the number of items returned.
+// works similarly to Pser but instead of full circles you can specify the number of items returned.
 // 0 - 2 - 3 - 5 - 7 - 8 - 11 - 12 - 0 - 2 - 3
 (
     Pbind(
@@ -153,7 +153,7 @@ Pbind(\degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 2), \dur, 0.2).play;
 
 // -----------Pgeom---------------
 // Takes three arguments: starts, grow, length
-// Grow incrementaly
+// Grow incrementally
 (
     Pbind(
 	    \note, Pseq([0, 2, 3, 5, 7, 8, 11, 12], inf),
@@ -164,7 +164,7 @@ Pbind(\degree, Pseq([0, 1, 2, 3, 4, 5, 6, 7], 2), \dur, 0.2).play;
 // -----------Pn---------------
 // Pattern a Number of times
 // repeats a given value: pattern, repeat, key
-// pattern can be any pattarn, Pshuf, Pseq ...
+// pattern can be any pattern, Pshuf, Pseq ...
 (
     Pbind(
     	\note, Pseq([0, Pn(2, 3), 3, Pn(5, 3), 7, Pn(8, 3), 11, 12], 1),
@@ -223,7 +223,7 @@ h.degrees; // the degrees are in this case the 12 notes.
 )
 
 // -----------EventStreamPlayer---------------
-/* Every time you call .play on a Pbind SC creates an object that plays the Pbind as if it was a score. In order to recall this object for axample to stop or pause, is necessary to save the object in a variable
+/* Every time you call .play on a Pbind SC creates an object that plays the Pbind as if it was a score. In order to recall this object for example to stop or pause, is necessary to save the object in a variable
 */
 ~player = f.play;
 ~player.stop;
@@ -235,6 +235,5 @@ h.degrees; // the degrees are in this case the 12 notes.
 
 
 // f.['degree'].postln;
-
 
 

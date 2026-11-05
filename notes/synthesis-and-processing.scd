@@ -86,6 +86,7 @@ x = {
 x.set(\freq, 778);
 x.set(\amp, 0.5);
 x.set(\freq, 920, \amp, 0.2);
+
 x.free;
 
 

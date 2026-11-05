@@ -1,7 +1,7 @@
 s.boot;
 
-// -----------------------Control Busses----------------------------
-/* Control busses in SC are for routing control signal, they work in the same way as audio busses. Sc has 4096 control busses by default */
+// -----------------------Control Buses----------------------------
+/* Control buses in SC are for routing control signal, they work in the same way as audio buses. Sc has 4096 control buses by default */
 // Write a control sign to bus 55
 {Out.kr(55, LFNoise0.kr(1))}.play;
 
@@ -11,7 +11,7 @@ s.boot;
 // Using the Bus object
 /* Buses become necessary the moment you need sharing, synchronization, or feedback across synth boundaries.
 When you pass a UGen to a synth you create a copy of it, so it can become cumbersome when you use it in multiple instances. 
-Also each copies is instantiated at a different moment in time, therefore the copies ar not in sync
+Also each copy is instantiated at a different moment in time, therefore the copies are not in sync.
 */
 ~my_control_bus = Bus.control(s, 1);
 {Out.kr(~my_control_bus, LFNoise0.kr(5).range(440, 880))}.play;
@@ -51,11 +51,11 @@ c = {Out.kr(~my_control, Pulse.kr(freq: MouseX.kr(1,10), mul: MouseY.kr(0,1)))}.
 c.free;
 
 // ----------------------- asMap ----------------------------
-// Is use to directly map a control bus to a running synth node, CANNOT be used inside a SynthDef
+// It is use to directly map a control bus to a running synth node, CANNOT be used inside a SynthDef
 // Create a SynthDef
 SynthDef("simple", { arg freq = 440; Out.ar(0, SinOsc.ar(freq, mul: 0.2))}).add;
 
-//Create control busses 
+//Create control buses 
 ~one_bus = Bus.control(s,1);
 ~another_bus = Bus.control(s,1);
 
