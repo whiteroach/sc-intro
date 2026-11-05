@@ -460,3 +460,103 @@ nothing to do with time)
 Release: The time (in seconds) that it takes to go from sustain level to zero (silence).
 */
 
+
+// ----------------------- SynthDef and Synth --------------------------
+// SynthDef is the definition of an instrument, the blueprint, while synth is the initialized instrument.
+SynthDef("my_sine_one", {Out.ar(0, SinOsc.ar(770, 0, 0.1))}).add;
+
+x = Synth("my_sine_one");
+x.free;
+
+(
+    SynthDef("my_sine_two", {
+        arg freq = 440, amp = 0.1;
+        var env = Env.perc(level:amp).kr(2);
+        var snd = SinOsc.ar(freq, 0, env);
+        Out.ar(0,snd); // remember to always specify the bus as last step!
+    }).add;
+)
+
+
+Synth("my_sine_two"); // default values
+Synth("my_sine_two", [\freq, 770, \amp, 0.2]);
+Synth("my_sine_two", [\freq, 415, \amp, 0.1]);
+Synth("my_sine_two", [\freq, 346, \amp, 0.3]);
+Synth("my_sine_two", [\freq, rrand(440, 880)]);
+
+// page 64:
+(
+    SynthDef("complex_one", {
+        arg freq = 60, amp = 0.1, gate = 1, release = 3;
+        var chorus, source, filter_mod, env, snd;
+// lag is an exponential filter, gradually change a value over a specified time
+        chorus = Lag.kr(freq, 2) * LFNoise2.kr([0.4, 0.5, 0.7, 1, 2, 5, 10]).range(1,1.02);
+        source = LFSaw.ar(chorus) * 0.5;
+        filter_mod = SinOsc.kr(1/16).range(1,10); // 1 cicle every 16 seconds
+        env = Env.asr(1, amp, release).kr(2, gate);
+        snd = LPF.ar(in: source, freq: freq * filter_mod, mul: env);
+
+        Out.ar(0, Splay.ar(snd))
+    }).add;
+)
+
+// NodeTree
+s.plotTree;
+
+a = Array.fill(6, { Synth("complex_one", [\freq, rrand(40, 70).midicps, \amp, rrand(0.1,0.5)]) });
+
+a[0].set(\gate, 0);
+a[1].set(\gate, 0);
+a[2].set(\gate, 0);
+a[3].set(\gate, 0);
+a[4].set(\gate, 0);
+a[5].set(\gate, 0);
+
+// a need to run.
+SystemClock.sched(0, {a[5.rand].set(\freq, rrand(40, 70).midicps); rrand(3, 10)});
+
+(
+    SynthDef("complex_two", {
+        arg freq = 60, amp = 0.1, gate = 1, release = 3;
+        var chorus, source, filter_mod, env, snd;
+        
+        chorus = Lag.kr(freq, 2) * LFNoise2.kr([0.4, 0.5, 0.7, 1, 2, 5, 10]).range(1,1.02);
+        source = LFSaw.ar(chorus) * 0.5;
+        
+        Out.ar(0, Splay.ar(source))
+    }).add;
+);
+
+Synth("complex_two", [\freq, 70.midicps, \amp, 0.3]);
+
+// ----------------------- Pbind can play SynthDef --------------------------
+(
+    Pbind(
+        \instrument, "complex_one",
+        \degree, Pwhite(-7,7),
+        \dur, Prand([ 0.125,0.25], inf),
+        \amp, Pwhite(0.5, 1),
+        \release, 1
+    ).play;
+)
+
+(
+    Pbind(
+        \instrument, "complex_one",
+        \scale, Pstutter(8, Pseq([
+            Scale.lydian,
+            Scale.major,
+            Scale.mixolydian,
+            Scale.minor,
+            Scale.phrygian
+        ],
+        inf
+        )),
+        \degree, Pseq([0,1,2,3,4,5,6,7], inf),
+        \dur, 0.2,
+        \amp, Pwhite(0.5, 1),
+        \release, 4,
+        \legato, 0.1
+    ).play;
+)
+
