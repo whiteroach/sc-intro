@@ -70,4 +70,56 @@ x.set(\freq, ~another_bus.asMap);
 x.free;
 
 // ----------------------- Order of execution ----------------------------
+// Create an audio bus
+~fx_bus = Bus.audio(s, 1);
+~master_bus = Bus.audio(s, 1);
 
+// Create SynthDefs
+(
+    SynthDef("noise", {Out.ar(~fx_bus, WhiteNoise.ar(0.5))}).add;
+    SynthDef("filter", {Out.ar(~master_bus, BPF.ar(in: In.ar(~fx_bus), freq: MouseY.kr(1000, 5000), rq: 0.1))}).add;
+    SynthDef("master-out", {arg amp = 1; Out.ar(0, In.ar(~master_bus) * Lag.kr(amp, 1))}).add;
+)
+//Open Node Tree window
+s.plotTree;
+// Play Synths
+m = Synth("master-out", addAction: 'addToTail'); // no matter how they are instantiated they will always keep the order
+f = Synth("filter", addAction: 'addAfter');
+n = Synth("noise", addAction: 'addToHead');
+
+// Master volume
+m.set(\amp, 0.1);
+
+// ----------------------- Groups ----------------------------
+// When you start to have a lot of synth, addAfter series does not scale well, so group may be a better solution.
+// Keep watching the tree
+s.plotTree;
+// Create some buses
+~reverb_bus = Bus.audio(s, 2);
+~master_bus = Bus.audio(s, 2);
+
+// Define groups
+(
+    ~sources = Group.new;
+    ~effects = Group.new(~sources, \addAfter);
+    ~master = Group.new(~effects, \addAfter);
+)
+// Run all Synths
+(
+    {
+        Out.ar(~reverb_bus, SinOsc.ar([800, 890]* LFPulse.ar(2) * 0.1))
+    }.play( target: ~sources ); // <- set it to sources group
+
+    {
+        Out.ar(~reverb_bus, WhiteNoise.ar(LFPulse.ar(2, 1/2, width: 0.05) * 0.1))
+    }.play( target: ~sources );
+    
+    {
+        Out.ar(~master_bus, FreeVerb.ar(In.ar(~reverb_bus, 2), mix: 0.5, room: 0.9))
+    }.play( target: ~effects );
+
+    {
+        Out.ar(0, In.ar(~master_bus, 2) * MouseY.kr(0,1))
+    }.play( target: ~master );
+
+)
